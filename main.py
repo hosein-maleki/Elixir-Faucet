@@ -26,42 +26,11 @@ def process_transaction(private_key, max_priority_fee, base_fee_multiplier):
     global counter
     try:
         counter += 1
-        logging.info(f"Processing transaction for key: {private_key}")
-
         account = w3.eth.account.from_key(private_key)
         sender_address = account.address
         logging.info(f"Sender address: {sender_address}")
-
         address_no_prefix = sender_address[2:]
-        data_template = f'0xc63d75b6000000000000000000000000{address_no_prefix}00000000000000000000000000000000000000000000003635c9adc5dea00000'
 
-        base_fee = w3.eth.fee_history(1, 'latest')['baseFeePerGas'][-1]
-        max_priority_fee_wei = w3.to_wei(max_priority_fee, 'gwei')
-        gas_price = int(base_fee * base_fee_multiplier + max_priority_fee_wei)
-
-        nonce = w3.eth.get_transaction_count(sender_address, 'pending')
-
-        transaction = {
-            'chainId': 11155111,
-            'to': '0x800eC0D65adb70f0B69B7Db052C6bd89C2406aC4',
-            'from': sender_address,
-            'nonce': nonce,
-            'maxFeePerGas': gas_price,
-            'maxPriorityFeePerGas': max_priority_fee_wei,
-            'gas': 0,
-            'data': data_template,
-            'value': 0
-        }
-
-        gas_limit = w3.eth.estimate_gas(transaction)
-        logging.info(f"Estimated gas limit: {gas_limit}")
-        transaction['gas'] = gas_limit
-
-        signed_txn = w3.eth.account.sign_transaction(transaction, private_key)
-
-        txn_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
-        
-        print(Fore.GREEN + f"Transaction successful! Hash: {w3.to_hex(txn_hash)}")
         
         # Check if the counter is greater than or equal to 1000
         if counter >= 20:
@@ -69,37 +38,73 @@ def process_transaction(private_key, max_priority_fee, base_fee_multiplier):
             # Add any custom logic that you want to execute when counter >= 1000
             
             print(Fore.YELLOW + "Counter reached 1000! Performing Stake")
-            data_template2 = f'0xa694fc3a000000000000000000000000{address_no_prefix}00000000000000000000000000000000000000000002fca8b3c6260b3ae00000'
+            data_template = f'0xa694fc3a000000000000000000000000{address_no_prefix}00000000000000000000000000000000000000000002fca8b3c6260b3ae00000'
 
-            base_fee2 = w3.eth.fee_history(1, 'latest')['baseFeePerGas'][-1]
-            max_priority_fee_wei2 = w3.to_wei(max_priority_fee, 'gwei')
-            gas_price2 = int(base_fee2 * base_fee_multiplier + max_priority_fee_wei2)
+            base_fee = w3.eth.fee_history(1, 'latest')['baseFeePerGas'][-1]
+            max_priority_fee_wei = w3.to_wei(max_priority_fee, 'gwei')
+            gas_price = int(base_fee * base_fee_multiplier + max_priority_fee_wei)
 
-            nonce2 = w3.eth.get_transaction_count(sender_address, 'pending')
+            nonce = w3.eth.get_transaction_count(sender_address, 'pending')
 
-            transaction2 = {
+            transaction = {
                 'chainId': 11155111,
                 'to': '0x7abF52a91D3D078960BAFC9912fa1bE248ef6dcf',
                 'from': sender_address,
-                'nonce': nonce2,
-                'maxFeePerGas': gas_price2,
-                'maxPriorityFeePerGas': max_priority_fee_wei2,
+                'nonce': nonce,
+                'maxFeePerGas': gas_price,
+                'maxPriorityFeePerGas': max_priority_fee_wei,
                 'gas': 0,
-                'data': data_template2,
+                'data': data_template,
                 'value': 0
             }
 
-            gas_limit2 = w3.eth.estimate_gas(transaction2)
-            logging.info(f"Estimated gas limit: {gas_limit2}")
-            transaction2['gas'] = gas_limit2
-            signed_txn2 = w3.eth.account.sign_transaction(transaction2, private_key)
+            gas_limit = w3.eth.estimate_gas(transaction)
+            logging.info(f"Estimated gas limit: {gas_limit}")
+            transaction['gas'] = gas_limit
+            signed_txn = w3.eth.account.sign_transaction(transaction, private_key)
 
-            txn_hash2 = w3.eth.send_raw_transaction(signed_txn2.raw_transaction)
+            txn_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
         
-            print(Fore.YELLOW + f"Stake successful! Hash: {w3.to_hex(txn_hash2)}")
+            print(Fore.YELLOW + f"Stake successful! Hash: {w3.to_hex(txn_hash)}")
             
             # Reset the counter to 0 after executing custom logic
             counter = 0
+            
+        else:
+            
+            logging.info(f"Processing transaction for key: {private_key}")
+
+
+            data_template = f'0xc63d75b6000000000000000000000000{address_no_prefix}00000000000000000000000000000000000000000000003635c9adc5dea00000'
+
+            base_fee = w3.eth.fee_history(1, 'latest')['baseFeePerGas'][-1]
+            max_priority_fee_wei = w3.to_wei(max_priority_fee, 'gwei')
+            gas_price = int(base_fee * base_fee_multiplier + max_priority_fee_wei)
+
+            nonce = w3.eth.get_transaction_count(sender_address, 'pending')
+
+            transaction = {
+                'chainId': 11155111,
+                'to': '0x800eC0D65adb70f0B69B7Db052C6bd89C2406aC4',
+                'from': sender_address,
+                'nonce': nonce,
+                'maxFeePerGas': gas_price,
+                'maxPriorityFeePerGas': max_priority_fee_wei,
+                'gas': 0,
+                'data': data_template,
+                'value': 0
+            }
+
+            gas_limit = w3.eth.estimate_gas(transaction)
+            logging.info(f"Estimated gas limit: {gas_limit}")
+            transaction['gas'] = gas_limit
+
+            signed_txn = w3.eth.account.sign_transaction(transaction, private_key)
+
+            txn_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
+        
+            print(Fore.GREEN + f"Transaction successful! Hash: {w3.to_hex(txn_hash)}")
+            
 
     except Exception as e:
         print(Fore.RED + f"Error processing transaction with key {private_key}: {e}")
